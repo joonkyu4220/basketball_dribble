@@ -284,7 +284,7 @@ class ENVIRONMENT : public RaisimGymEnv {
                         }
                         is_hand_ = true;
                         from_hand_ = true;
-                        from_ground_ = true;
+                        from_ground_ = false;
                     }
                     else {
                         terminal_flag_ = true;
