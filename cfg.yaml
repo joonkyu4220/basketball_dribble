@@ -1,0 +1,21 @@
+seed: 1
+record_video: yes # yes
+
+environment:
+  render: True
+# just testing commenting
+  num_envs: 800 # 800
+  eval_every_n: 200
+  num_threads: 30 #30
+  simulation_dt: 0.002 #0.0025
+  control_dt: 0.033
+  max_time: 100.0
+  reward:
+    dribble:
+      coeff: 0.8 # 0.65
+    ball distance:
+      coeff: 0.2
+
+architecture:
+  policy_net: [128, 128]
+  value_net: [128, 128]
