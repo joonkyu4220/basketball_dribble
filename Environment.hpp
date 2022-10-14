@@ -47,7 +47,8 @@ class ENVIRONMENT : public RaisimGymEnv {
             ball_ = world_->addArticulatedSystem(resourceDir_ + "/ball3D.urdf");
             ball_->setName("ball");
             ball_->setIntegrationScheme(raisim::ArticulatedSystem::IntegrationScheme::RUNGE_KUTTA_4);
-            world_->setMaterialPairProp("default", "ball", 1.0, 0.8, 0.0001);
+            world_->setMaterialPairProp("default", "ball", 1.0, 0.01, 0.0001);
+            // world_->setMaterialPairProp("default", "ball", 1.0, 0.8, 0.0001);
             world_->setMaterialPairProp("ball", "steel", 5.0, 0.85, 0.0001);
 
             ball_gcDim_ = ball_->getGeneralizedCoordinateDim();
@@ -261,10 +262,12 @@ class ENVIRONMENT : public RaisimGymEnv {
                 if (contact.getPosition()[2] < 0.01)
                 {
                     if (from_ground_) {
+                        // std::cout << "GG" << std::endl;
                         terminal_flag_ = true;
                         break;
                     }
                     if (is_hand_) {
+                        // std::cout << "DOUBLE" << std::endl;
                         terminal_flag_ = true;
                         break;
                     }
@@ -276,6 +279,7 @@ class ENVIRONMENT : public RaisimGymEnv {
                     auto& pair_contact = world_->getObject(contact.getPairObjectIndex())->getContacts()[contact.getPairContactIndexInPairObject()];
                     if (arm_->getBodyIdx("wrist") == pair_contact.getlocalBodyIndex()){
                         if (is_ground_) {
+                            // std::cout << "DOUBLE" << std::endl;
                             terminal_flag_ = true;
                             break;
                         }
@@ -287,12 +291,16 @@ class ENVIRONMENT : public RaisimGymEnv {
                         from_ground_ = false;
                     }
                     else {
+                        // std::cout << "OTHER BODY CONTACT" << std::endl;
                         terminal_flag_ = true;
                         break;
                     }
                 }
             }
         }
+
+        is_hand_ = false;
+        is_ground_ = false;
 
         updateObservation();
         computeReward();
@@ -328,16 +336,21 @@ class ENVIRONMENT : public RaisimGymEnv {
     }
 
     bool isTerminalState(float& terminalReward) final {
-        if (time_limit_reached()) return true;
+        if (time_limit_reached()) {
+            // std::cout << "max sim step" << std::endl;
+            return true;
+        }
         // ball too far
         // if ((ball_gc_[0] - gc_[0]) * (ball_gc_[0] - gc_[0]) + (ball_gc_[1] - gc_[1]) * (ball_gc_[1] - gc_[1]) > 1) {
         //     return true;
         // }
         if ((obDouble_[21] - obDouble_[34]) * (obDouble_[21] - obDouble_[34]) + (obDouble_[22] - obDouble_[35]) * (obDouble_[22] - obDouble_[35]) > 1){
+            // std::cout << "ball too far" << std::endl;
             return true;
         }
         if (terminal_flag_)
         {
+            // std::cout << "else" << std::endl;
             return true;
         }
         return false;
