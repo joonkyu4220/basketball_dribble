@@ -19,7 +19,7 @@ class ENVIRONMENT : public RaisimGymEnv {
             world_->addGround(0, "steel");
             world_->setERP(1.0);
 
-            arm_ = world_->addArticulatedSystem(resourceDir_ + "/arm.urdf");
+            arm_ = world_->addArticulatedSystem(resourceDir_ + "/arm_round.urdf");
             arm_->setName("arm");
             arm_->setControlMode(raisim::ControlMode::PD_PLUS_FEEDFORWARD_TORQUE);
             world_->setMaterialPairProp("default", "steel", 5.0, 0.0, 0.0001);
